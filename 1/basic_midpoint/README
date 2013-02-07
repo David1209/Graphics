@@ -1,0 +1,3 @@
+To solve dependency issues:
+
+$ sudo apt-get install libsdl1.2-dev
