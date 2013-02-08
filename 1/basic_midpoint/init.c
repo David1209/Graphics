@@ -2,14 +2,14 @@
  *
  * Filename ........ init.c
  * Description ..... SDL Surface initialization, Pixel operations
- * Created by ...... Jurgen Sturm 
+ * Created by ...... Jurgen Sturm
  *
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "SDL.h"   
+#include "SDL.h"
 #include "init.h"
 #include "mla.h"
 
@@ -85,11 +85,13 @@ void DrawFigure(SDL_Surface *screen) {
     }
 
     /* draw a line */
-    mla(screen, mid_x, mid_y, 
-        (int)roundf(size*cos(2*M_PI/32*i))+mid_x, 
-        (int)roundf(size*sin(2*M_PI/32*i))+mid_y, colour);
+    mla(screen, mid_x, mid_y,
+      (int)roundf(size*cos(2*M_PI/32*i))+mid_x,
+    (int)roundf(size*sin(2*M_PI/32*i))+mid_y, colour);
   }
-
+  //  mla(screen, 100, 280, 200, 50, SDL_MapRGB(screen->format, 0xFF, 0, 0));
+  //  mla(screen, 100, 100, 200, 50, SDL_MapRGB(screen->format, 0, 0xFF, 0));
+  //  mla(screen, 150, 150, 50, 50, SDL_MapRGB(screen->format, 0, 0, 0xFF));
   /* It would be more efficient to call SDL_UpdateRect(), but I do not really
    * care.
    */
@@ -112,7 +114,7 @@ SDL_Surface* InitialiseScreen(int w, int h) {
 
   atexit(SDL_Quit);
 
-  /* Create a `screen' (surface) to render into 
+  /* Create a `screen' (surface) to render into
    * `SDL_DOUBLEBUF' flag is hack(ish)
    */
   screen=SDL_SetVideoMode(w, h, 0, SDL_HWSURFACE);
