@@ -61,11 +61,12 @@ void draw_triangle(float x0, float y0, float x1, float y1, float x2, float y2,
             float a = fij(x, y, x1, y1, x2, y2) / fa;
             float b = fij(x, y, x2, y2, x0, y0) / fb;
             float c = fij(x, y, x0, y0, x1, y1) / fc;
-            if (a >= 0 && b >= 0 && c >= 0 &&
-                    (a > 0 || fij(-1, -1, x1, y1, x2, y2) * fa > 0) &&
-                    (b > 0 || fij(-1, -1, x2, y2, x0, y0) * fb > 0) &&
-                    (c > 0 || fij(-1, -1, x0, y0, x1, y1) * fc > 0)) {
-                PutPixel(x, y, r, g, blue);
+            if (a >= 0 && b >= 0 && c >= 0) {
+                if ((a > 0 || fij(-1, -1, x1, y1, x2, y2) * fa > 0) &&
+                        (b > 0 || fij(-1, -1, x2, y2, x0, y0) * fb > 0) &&
+                        (c > 0 || fij(-1, -1, x0, y0, x1, y1) * fc > 0)) {
+                    PutPixel(x, y, r, g, blue);
+                }
             }
         }
     }
