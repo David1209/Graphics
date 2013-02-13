@@ -56,3 +56,7 @@ Thumbs.db
 ############
 
 1/triangle_rasterization/trirast
+2/positioning_the_camera/main
+2/transformations_and_gimbal_lock/gimbal
+2/transformations_and_gimbal_lock/transformations
+
