@@ -59,8 +59,9 @@ void ReSizeGLScene(int Width, int Height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void drawRotatedTeapot(float rotx, float roty, float rotz)
+void drawRotatedTeapot(float rotx, float roty, float rotz, float x)
 {
+    glTranslatef(x, 0, 0);
     glRotatef(rotx, 1.0, 0.0, 0.0);
     glRotatef(roty, 0.0, 1.0, 0.0);
     glRotatef(rotz, 0.0, 0.0, 1.0);
@@ -95,13 +96,13 @@ void drawRotatedTeapot(float rotx, float roty, float rotz)
     glEnd();
 }
 
-void drawTeapots(void)
+void drawTeapots(float x, float y)
 {
     /* This function is called from DrawGLScene() below */
 
     glPushMatrix();
 
-    drawRotatedTeapot(x_rotation, 0.0, z_rotation);
+    drawRotatedTeapot(x_rotation, y, z_rotation, x);
 
     glPopMatrix();
 }
@@ -113,8 +114,9 @@ void DrawGLScene(void)
     glLoadIdentity ();
     gluLookAt (5.0, 6.0, 9.0,  5.0, 0.0, 0.0,   0.0, 1.0, 0.0);
 
-    drawTeapots();
-
+    drawTeapots(0, 0);
+    drawTeapots(5, 45);
+    drawTeapots(10, 90);
     glutSwapBuffers();
 }
 
