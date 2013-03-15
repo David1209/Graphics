@@ -430,7 +430,10 @@ DrawGLScene(void)
         glScalef(1, 1 + (rand_float()-0.5)*0.6, 1);
 
         DrawPolylist(polylistTreeStem);
-        DrawPolylist(polylistTreeLeafs);
+        for (int i = 0; i < 5; i++) {
+            DrawPolylist(polylistTreeLeafs);
+            glRotatef(72.0, 0, 1, 0);
+        }
 
         glPopMatrix();
     }
