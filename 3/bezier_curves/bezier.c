@@ -17,6 +17,29 @@
 #include <math.h>
 #include "bezier.h"
 #include <stdio.h>
+#include <stdlib.h>
+
+/* Calculate the factorial of n
+ */
+int factorial(int n) {
+    int answer = 1;
+    for (int i = 2; i <= n; i++) {
+        answer *= i;
+    }
+    return answer;
+}
+
+/* Calculate n over k
+ */
+float binomial(int n, int k) {
+    return factorial(n) / (float) (factorial(k) * factorial(n - k));
+}
+
+/* Calculate the ith Bernstein polynomial of degree n
+ */
+float bernstein(int n, int i, float u) {
+    return binomial(n, i) * pow(u, i) * pow(1 - u, n - i);
+}
 
 /* Given a Bezier curve defined by the 'num_points' control points
  * in 'p' compute the position of the point on the curve for parameter
@@ -26,11 +49,17 @@
  * respectively.
  */
 
-void
-evaluate_bezier_curve(float *x, float *y, control_point p[], int num_points, float u)
+void evaluate_bezier_curve(float *x, float *y, control_point p[], int num_points, float u)
 {
     *x = 0.0;
     *y = 0.0;
+
+    for (int i = 0; i < num_points; i++) {
+        float bern = bernstein(num_points - 1, i, u);
+        *x += bern * p[i].x;
+        *y += bern * p[i].y;
+    }
+
 }
 
 /* Draw a Bezier curve defined by the control points in p[], which
@@ -54,9 +83,25 @@ evaluate_bezier_curve(float *x, float *y, control_point p[], int num_points, flo
  * the curve.
  */
 
-void
-draw_bezier_curve(int num_segments, control_point p[], int num_points)
+void draw_bezier_curve(int num_segments, control_point p[], int num_points)
 {
+    float x, y;
+
+    glBegin(GL_LINE_STRIP);
+
+    // start line
+    glVertex2f(p[0].x, p[0].y);
+
+    // calculate and draw points in the middle
+    for (int i = 1; i < num_segments; i++) {
+        evaluate_bezier_curve(&x, &y, p, num_points, i / (float) num_segments);
+        glVertex2f(x, y);
+    }
+
+    // end line
+    glVertex2f(p[num_points - 1].x, p[num_points - 1].y);
+    glEnd();
+
 }
 
 /* Find the intersection of a cubic Bezier curve with the line X=x.
@@ -65,8 +110,7 @@ draw_bezier_curve(int num_segments, control_point p[], int num_points)
    Return 0 if no intersection exists.
 */
 
-int
-intersect_cubic_bezier_curve(float *y, control_point p[], float x)
+int intersect_cubic_bezier_curve(float *y, control_point p[], float x)
 {
     return 0;
 }
