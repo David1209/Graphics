@@ -30,7 +30,7 @@ unsigned int num_levels;
 level_t *levels;
 
 const b2Vec2 gravity(0, -9.8);
-b2World m_world(gravity, false);
+b2World m_world(gravity);
 b2Body* ball;
 
 
@@ -50,13 +50,75 @@ void load_world(unsigned int level)
 
     // Create a Box2D world and populate it with all bodies for this level
     // (including the ball).
+
+    // 
+    level = 1;
+
+ 
+
+   
+/*
+ * Every vertex has a 2D position.
+
+typedef struct {
+    float x, y;
+} point_t;
+
+*
+ * A polygon has a bunch of vertices.
+ *
+typedef struct {
+    unsigned int num_verts;
+    point_t *verts;
+} poly_t;
+
+*
+ * Represents a level with start and end positions, and a bunch of polygons.
+ *
+typedef struct {
+    unsigned int num_polygons;
+    poly_t *polygons;
+    point_t start, end;
+} level_t; */
+
+    unsigned int i, j;
+    b2PolygonShape *shapes = new b2PolygonShape[levels[level].num_polygons];
+    b2BodyDef *bodyDefs = new b2BodyDef[levels[level].num_polygons];
+    b2FixtureDef *fixtureDefs = new b2FixtureDef[levels[level].num_polygons];
+    b2Body* theBody;
+    printf("bodydefs: %d\n", levels[level].num_polygons);
+    for(i = 0; i < levels[level].num_polygons; i++)
+    {
+        unsigned int num = levels[level].polygons[i].num_verts;
+        b2Vec2 *vertices = new b2Vec2[num];
+        printf("num = %d\n", num);
+        for(j = 0; j < num; j++)
+        {
+            printf("in j\n");
+            vertices[num] = b2Vec2(levels[level].polygons[i].verts[j].x, levels[level].polygons[i].verts[j].y);
+            printf("uit j\n");
+        }
+        shapes[i].Set(vertices, num);
+        bodyDefs[i].type = b2_staticBody;
+        bodyDefs[i].position.Set(0,0);
+        bodyDefs[i].angle = 0;
+        b2BodyDef *bodyDefPtr = &bodyDefs[i];
+        fixtureDefs[i].shape = &shapes[i];
+        fixtureDefs[i].density = 1;
+        // the following line segfaults
+        theBody = m_world.CreateBody(bodyDefPtr);
+        theBody->CreateFixture(&fixtureDefs[i]);
+    }
+
+// ---------------------------------------
+
     b2BodyDef ballBody;
     b2CircleShape ballShape;
     b2FixtureDef ballFixture;
 
     ballBody.type = b2_dynamicBody;
-    ballBody.position.Set(1, 1);
-    ballBody.angle = 0;
+    ballBody.position.Set(4, 6);
+    ballBody.angle = 40;
 
     ballShape.m_p.Set(0, 0);
     ballShape.m_radius = 0.1;
@@ -66,6 +128,8 @@ void load_world(unsigned int level)
 
     ball = m_world.CreateBody(&ballBody);
     ball->CreateFixture(&ballFixture);
+    
+    
 }
 
 
