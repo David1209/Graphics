@@ -31,9 +31,7 @@ level_t *levels;
 
 const b2Vec2 gravity(0, -9.8);
 b2World m_world(gravity, false);
-b2BodyDef ballBody;
-b2CircleShape ballShape;
-b2FixtureDef ballFixture;
+b2Body* ball;
 
 
 /*
@@ -52,6 +50,10 @@ void load_world(unsigned int level)
 
     // Create a Box2D world and populate it with all bodies for this level
     // (including the ball).
+    b2BodyDef ballBody;
+    b2CircleShape ballShape;
+    b2FixtureDef ballFixture;
+
     ballBody.type = b2_dynamicBody;
     ballBody.position.Set(1, 1);
     ballBody.angle = 0;
@@ -62,8 +64,8 @@ void load_world(unsigned int level)
     ballFixture.shape = &ballShape;
     ballFixture.density = 1;
 
-    b2Body* dynamicBody = m_world.CreateBody(&ballBody);
-    dynamicBody->CreateFixture(&ballFixture);
+    ball = m_world.CreateBody(&ballBody);
+    ball->CreateFixture(&ballFixture);
 }
 
 
@@ -76,8 +78,9 @@ void draw(void)
     int time = glutGet(GLUT_ELAPSED_TIME);
     int frametime = time - last_time;
     int circle_triangles = 30;
-    double ballx = ballBody.position.x;
-    double bally = ballBody.position.y;
+    double ballx = ball->GetPosition().x;
+    double bally = ball->GetPosition().y;
+    double ballr = ball->GetFixtureList()[0].GetShape()->m_radius;
     double twoPi = 2.0 * 3.14159;
     frame_count++;
 
@@ -90,7 +93,7 @@ void draw(void)
     //
     // Do any logic and drawing here.
     //
-    m_world.Step(10, 1, 1);
+    m_world.Step(1/60.0, 1, 1);
 
     // Draw the ball source: http://en.wikibooks.org/wiki/OpenGL_Programming/Basics/2DObjects
     glColor3f(1, 1, 1);
@@ -100,8 +103,8 @@ void draw(void)
 
     glVertex2f(ballx, bally);
     for (int i = 0; i <= circle_triangles; i++) {
-        glVertex2f(ballx + ballShape.m_radius * cos(i * twoPi / circle_triangles),
-                   bally + ballShape.m_radius * sin(i * twoPi / circle_triangles));
+        glVertex2f(ballx + ballr * cos(i * twoPi / circle_triangles),
+                   bally + ballr * sin(i * twoPi / circle_triangles));
     }
 
     glEnd();
