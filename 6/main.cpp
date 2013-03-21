@@ -15,6 +15,7 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <Box2D/Box2D.h>
+#include <math.h>
 
 #include "levels.h"
 
@@ -27,6 +28,12 @@ int frame_count;
 // Information about the levels loaded from files will be available in these.
 unsigned int num_levels;
 level_t *levels;
+
+const b2Vec2 gravity(0, -9.8);
+b2World m_world(gravity, false);
+b2BodyDef ballBody;
+b2CircleShape ballShape;
+b2FixtureDef ballFixture;
 
 
 /*
@@ -45,6 +52,18 @@ void load_world(unsigned int level)
 
     // Create a Box2D world and populate it with all bodies for this level
     // (including the ball).
+    ballBody.type = b2_dynamicBody;
+    ballBody.position.Set(1, 1);
+    ballBody.angle = 0;
+
+    ballShape.m_p.Set(0, 0);
+    ballShape.m_radius = 0.1;
+
+    ballFixture.shape = &ballShape;
+    ballFixture.density = 1;
+
+    b2Body* dynamicBody = m_world.CreateBody(&ballBody);
+    dynamicBody->CreateFixture(&ballFixture);
 }
 
 
@@ -56,6 +75,10 @@ void draw(void)
 {
     int time = glutGet(GLUT_ELAPSED_TIME);
     int frametime = time - last_time;
+    int circle_triangles = 30;
+    double ballx = ballBody.position.x;
+    double bally = ballBody.position.y;
+    double twoPi = 2.0 * 3.14159;
     frame_count++;
 
     // Clear the buffer
@@ -63,9 +86,28 @@ void draw(void)
     glClear(GL_COLOR_BUFFER_BIT);
 
 
+
     //
     // Do any logic and drawing here.
     //
+    m_world.Step(10, 1, 1);
+
+    // Draw the ball source: http://en.wikibooks.org/wiki/OpenGL_Programming/Basics/2DObjects
+    glColor3f(1, 1, 1);
+    printf("%f %f\n", ballx, bally);
+
+    glBegin(GL_TRIANGLE_FAN);
+
+    glVertex2f(ballx, bally);
+    for (int i = 0; i <= circle_triangles; i++) {
+        glVertex2f(ballx + ballShape.m_radius * cos(i * twoPi / circle_triangles),
+                   bally + ballShape.m_radius * sin(i * twoPi / circle_triangles));
+    }
+
+    glEnd();
+
+
+
 
 
     // Show rendered frame
