@@ -52,34 +52,24 @@ void load_world(unsigned int level)
     // (including the ball).
 
     // 
-    level = 1;
+    level = 2;
 
- 
+    b2BodyDef ballBody;
+    b2CircleShape ballShape;
+    b2FixtureDef ballFixture;
 
-   
-/*
- * Every vertex has a 2D position.
+    ballBody.type = b2_dynamicBody;
+    ballBody.position.Set(4, 6);
+    ballBody.angle = 0;
 
-typedef struct {
-    float x, y;
-} point_t;
+    ballShape.m_p.Set(0, 0);
+    ballShape.m_radius = 0.1;
 
-*
- * A polygon has a bunch of vertices.
- *
-typedef struct {
-    unsigned int num_verts;
-    point_t *verts;
-} poly_t;
+    ballFixture.shape = &ballShape;
+    ballFixture.density = 1;
 
-*
- * Represents a level with start and end positions, and a bunch of polygons.
- *
-typedef struct {
-    unsigned int num_polygons;
-    poly_t *polygons;
-    point_t start, end;
-} level_t; */
+    ball = m_world.CreateBody(&ballBody);
+    ball->CreateFixture(&ballFixture);
 
     unsigned int i, j;
     b2PolygonShape *shapes = new b2PolygonShape[levels[level].num_polygons];
@@ -96,6 +86,7 @@ typedef struct {
         {
             printf("in j\n");
             vertices[num] = b2Vec2(levels[level].polygons[i].verts[j].x, levels[level].polygons[i].verts[j].y);
+            printf("v%d: %f, %f\n", j, levels[level].polygons[i].verts[j].x, levels[level].polygons[i].verts[j].y);
             printf("uit j\n");
         }
         shapes[i].Set(vertices, num);
@@ -105,29 +96,11 @@ typedef struct {
         b2BodyDef *bodyDefPtr = &bodyDefs[i];
         fixtureDefs[i].shape = &shapes[i];
         fixtureDefs[i].density = 1;
-        // the following line segfaults
         theBody = m_world.CreateBody(bodyDefPtr);
         theBody->CreateFixture(&fixtureDefs[i]);
     }
 
 // ---------------------------------------
-
-    b2BodyDef ballBody;
-    b2CircleShape ballShape;
-    b2FixtureDef ballFixture;
-
-    ballBody.type = b2_dynamicBody;
-    ballBody.position.Set(4, 6);
-    ballBody.angle = 40;
-
-    ballShape.m_p.Set(0, 0);
-    ballShape.m_radius = 0.1;
-
-    ballFixture.shape = &ballShape;
-    ballFixture.density = 1;
-
-    ball = m_world.CreateBody(&ballBody);
-    ball->CreateFixture(&ballFixture);
     
     
 }
@@ -161,7 +134,7 @@ void draw(void)
 
     // Draw the ball source: http://en.wikibooks.org/wiki/OpenGL_Programming/Basics/2DObjects
     glColor3f(1, 1, 1);
-    printf("%f %f\n", ballx, bally);
+    //printf("%f %f\n", ballx, bally);
 
     glBegin(GL_TRIANGLE_FAN);
 
